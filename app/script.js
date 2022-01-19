@@ -46,6 +46,18 @@ function makeMovieListHTML(movies) {
     pGenre.textContent = movie.genre;
     div.appendChild(pGenre);
 
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    div.appendChild(deleteBtn);
+    deleteBtn.addEventListener("click", function () {
+      console.log(movie.id);
+      console.log(movie.name);
+      //deleteMovieInApi(movie);
+      let url = "http://localhost:1337/api/movies/" + movie.id;
+      //console.log(url);
+      deleteMovieInApi(url);
+    });
+
     listDiv.appendChild(div);
   }
 }
@@ -83,6 +95,25 @@ function createMovieInAPI(movie) {
     });
 }
 
+function deleteMovieInApi(url) {
+  fetch(url, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: null,
+  })
+    .then(function (result) {
+      return result.json();
+      console.log("API success");
+    })
+    .then(function (data) {
+      getMoviesFromAPI();
+      console.log("DEL success");
+      console.log(data);
+    });
+}
+
 function hookButtons() {
   // add-movies-btn
   const addBtn = document.querySelector("#add-movies-btn");
@@ -100,6 +131,7 @@ function hookButtons() {
     el1.classList.remove("d-none");
     const el2 = document.querySelector("#add-movies");
     el2.classList.add("d-none");
+    getMoviesFromAPI();
   });
 }
 
@@ -133,6 +165,7 @@ function hookAddMovieForm() {
     };
 
     createMovieInAPI(movie);
+    form.reset();
   });
 }
 
